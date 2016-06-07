@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <canvas id="canvas" width="300" height="300"></canvas>
+<script>
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+    context.beginPath();
+    context.lineWidth = 1;
+    context.strokeStyle = "#000";
+    context.moveTo(0.9999999999,9999998);
+    context.lineTo(1.0000000001, 999999);
+    context.stroke();
+</script>
+</body>
+</html>

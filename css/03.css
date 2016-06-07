@@ -1,0 +1,35 @@
+#precision-slider .slider-selection{
+    background: #149bdf;
+}
+
+#init-value-input input{
+    width: 300px;
+    margin: 5px;
+}
+
+.init-input-element *{
+    white-space: nowrap;
+}
+
+#result-panel{
+    overflow-x: scroll;
+}
+
+.result-table{
+    border: 1px solid #000;
+    min-width: 80%;
+    margin:0 auto;
+}
+
+.result-table thead{
+    border: 1px solid #000;
+}
+.result-table th{
+    border: 1px solid #000;
+    text-align: center;
+}
+
+.result-table td{
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+}

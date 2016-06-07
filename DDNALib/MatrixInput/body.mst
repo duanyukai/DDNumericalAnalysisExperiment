@@ -1,0 +1,43 @@
+<!-- 标签导航 -->
+<ul class="nav nav-tabs" id="{{panelName}}-input-tab">
+    <li class="active"><a href="#{{panelName}}-simple-input" data-toggle="tab">简单输入</a></li>
+    <li><a href="#{{panelName}}-advanced-input" data-toggle="tab">高级输入</a></li>
+</ul>
+<!-- 标签页内容 -->
+<div class="tab-content">
+    <div class="tab-pane active" id="{{panelName}}-simple-input">
+        <!--普通输入-->
+        <p class="text-center text-info">
+            {{{help}}}
+        </p>
+        <div class="row">
+            <div class="col-md-9">
+                <div class="input-group">
+                    <span class="input-group-addon">{{matrixSizeHelp}}</span>
+                    <input id="{{panelName}}-matrix-size-input" type="text" class="form-control" placeholder="如：10"/>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button class="btn-matrix-generate btn btn-primary">点击生成输入框</button>
+            </div>
+        </div>
+        <div class="simple-input-panel well">
+            <!--js生成区域-->
+            <p class="text-center text-info">
+                （这里将生成输入框矩阵）
+            </p>
+        </div>
+    </div>
+    <div class="tab-pane" id="{{panelName}}-advanced-input">
+        请输入矩阵：
+        <textarea class="textarea-advanced"></textarea>
+    </div>
+</div>
+<p class="text-center">
+    <button class="btn-finish-input btn btn-success">确认完成输入</button>
+</p>
+<div class="finish-input-show well">
+    <p class="text-center text-info">
+        （这里将展示输入的自然书写结果）
+    </p>
+</div>

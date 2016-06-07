@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>课题六：函数插值方法</title>
+    <link rel="stylesheet" href="ExtLib/css/bootstrap.css">
+    <link rel="stylesheet" href="ExtLib/css/bootstrap-slider.min.css">
+
+    <link rel="stylesheet" href="DDNALib/MatrixInput/matrix-input.css">
+    <link rel="stylesheet" href="css/06.css">
+
+    <script src="ExtLib/js/jquery-1.12.3.min.js"></script>
+    <script src="ExtLib/js/bootstrap.min.js"></script>
+    <script src="ExtLib/js/bootstrap-slider.min.js"></script>
+
+    <script src="DDNALib/MatrixInput/matrix-input.js"></script>
+    <script src="DDNALib/DDPlot.js"></script>
+    <script src="DDNALib/DDNA.js"></script>
+    <script src="js/06.js"></script>
+</head>
+<body>
+    <div class="container" style="margin-top: 20px;">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        段段数值分析编程实验内容
+                    </div>
+                    <div class="panel-body">
+                        <div class="page-header">
+                            <h1>课题六：函数插值方法</h1>
+                        </div>
+                        <p>
+                            给定函数$y=f(x)$的$n+1$个节点值$y_j=f(x_j), j=0,1,...,n$. 试用Lagrange方法求其n次插值多项式或分段插值多项式。
+                        </p>
+                        <p>(1)给定数据如下</p>
+                        <table class="data-table">
+                            <tr><td>$x_j$</td><td>0.4</td><td>0.55</td><td>0.65</td><td>0.80</td><td>0.95</td><td>1.05</td></tr>
+                            <tr><td>$y_j$</td><td>0.41075</td><td>0.57815</td><td>0.69675</td><td>0.90</td><td>1.00</td><td>1.25382</td></tr>
+                        </table>
+                        <p>
+                            构造5次Lagrange插值多项式和分段2次插值多项式，并计算$f(0.596)$，$f(0.99)$的值。
+                        </p>
+                        <p>
+                            (2)给定数据如下：
+                        </p>
+                        <table class="data-table">
+                            <tr><td>$x_j$</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+                            <tr><td>$y_j$</td><td>0.368</td><td>0.135</td><td>0.050</td><td>0.018</td><td>0.007</td><td>0.002</td><td>0.001</td></tr>
+                        </table>
+                        <p>
+                            构造6次Lagrange插值多项式，并计算f(1.8)的值。
+                        </p>
+                        <p>
+                            以上两问的数据表示如下，可直接复制到计算框中。
+                        </p>
+<!--start-->
+<pre>
+数据一：
+[
+    [    0.4,    0.55,    0.65, 0.80, 0.95,    1.05],
+    [0.41075, 0.57815, 0.69675, 0.90, 1.00, 1.25382]
+]
+数据二：
+[
+    [     1,     2,     3,     4,     5,     6,     7],
+    [ 0.368, 0.135, 0.050, 0.018, 0.007, 0.002, 0.001]
+]
+</pre>
+<!--end-->
+                        <div>
+                            <h3>拉格朗日多项式（分段）插值</h3>
+                            <form name="lagrange" class="text-center">
+                                <p>数据输入框（示例参考上方，可直接复制）</p>
+                                <textarea id="lagrange-input" name="lagrange-input"></textarea>
+                                <div class="radio-inline">
+                                    <label>
+                                        <input type="radio" name="method" value="1" checked>
+                                        n次拉格朗日多项式插值
+                                    </label>
+                                </div>
+                                <div class="radio-inline">
+                                    <label>
+                                        <input type="radio" name="method" value="2">
+                                        分段拉格朗日插值
+                                    </label>
+                                </div>
+                                <div class="input-group" id="pow-input">
+                                    <span class="input-group-addon">插值次数</span>
+                                    <input name="pow" type="text" class="form-control" placeholder="如：2"/>
+                                </div>
+                            </form>
+                            <p class="text-center">
+                                <button id="btn-start-computing-lagrange" class="btn btn-success" type="button">绘制插值多项式图像</button>
+                            </p>
+                            <p class="text-center text-info">
+                                帮助：为协助本实验，本人另外完成了这款小型的函数图像绘制器，生成图像将显示在下方。<br>
+                                鼠标点击拖拽可移动图像，滚动滚轮缩放图像，鼠标指向点或函数附近将显示该点处的坐标。
+                            </p>
+                            <div id="lagrange-plot">
+                                <p class="text-center text-info">
+                                    （这里将生成图像）
+                                </p>
+                            </div>
+                            代值计算
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">x=</span>
+                                        <input id="x-input" type="text" class="form-control" placeholder="如：10"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <button id="btn-compute-y" class="btn btn-block btn-success">计算</button>
+                                </div>
+                            </div>
+                            <p></p>
+                            <div class="well text-center" id="result-panel">
+                                <p class="text-center text-info">
+                                    （这里将显示计算结果）
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        实验导航
+                    </div>
+                    <div class="panel-body">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li><a href="index.html">首页</a></li>
+                            <li><a href="01.html">课题一：解线性方程组的直接方法</a></li>
+                            <li><a href="02.html">课题二：矩阵求逆运算</a></li>
+                            <li><a href="03.html">课题三：解线性方程组的迭代法</a></li>
+                            <li><a href="04.html">课题四：迭代格式的比较</a></li>
+                            <li class="disabled"><a href="#" title="本课题不在教学范围内，尚未完成">课题五：求矩阵的部分特征值</a></li>
+                            <li class="active"><a href="06.html">课题六：函数插值方法</a></li>
+                            <li><a href="07.html">课题七：Runge现象的产生与克服</a></li>
+                            <li><a href="08.html">课题八：曲线拟合的最小二乘法</a></li>
+                            <li><a href="09.html">课题九：数值积分</a></li>
+                            <li><a href="10.html">课题十：常微分方程初值问题的数值方法</a></li>
+                            <li><a href="11.html">课题十一：两点边值问题</a></li>
+                            <li><a href="12.html">课题十二：数值方法教学软件</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <hr/>
+                <div class="text-center text-primary">
+                    <h4>段段数值分析编程实验</h4>
+                    <h4>段育凯 20144569</h4>
+                    软件学院 软件工程 1401班<br/>
+                    邮箱：<a href="mailto:a@neu.la">a@neu.la</a>
+                    手机：13704017786
+                    QQ：452214596
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--引入mathjax依赖-->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+        });
+    </script>
+    <script src="http://cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+</body>
+</html>

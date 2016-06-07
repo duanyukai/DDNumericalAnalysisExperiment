@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>课题八：曲线拟合的最小二乘法</title>
+    <link rel="stylesheet" href="ExtLib/css/bootstrap.css">
+    <link rel="stylesheet" href="ExtLib/css/bootstrap-slider.min.css">
+
+    <link rel="stylesheet" href="DDNALib/MatrixInput/matrix-input.css">
+    <link rel="stylesheet" href="css/08.css">
+
+    <script src="ExtLib/js/jquery-1.12.3.min.js"></script>
+    <script src="ExtLib/js/bootstrap.min.js"></script>
+    <script src="ExtLib/js/bootstrap-slider.min.js"></script>
+
+    <script src="DDNALib/MatrixInput/matrix-input.js"></script>
+    <script src="DDNALib/DDPlot.js"></script>
+    <script src="DDNALib/DDNA.js"></script>
+    <script src="js/08.js"></script>
+</head>
+<body>
+    <div class="container" style="margin-top: 20px;">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        段段数值分析编程实验内容
+                    </div>
+                    <div class="panel-body">
+                        <div class="page-header">
+                            <h1>课题八：曲线拟合的最小二乘法</h1>
+                        </div>
+                        <p>
+                            从一组数据中找出其规律性，给出其数学模型的近似表达式问题，在生产实践和科学实验中大量存在，
+                            通常可利用数据拟合的最小二乘法解决这样的问题。
+                        </p>
+                        <p>
+                            在某冶炼过程中，通过实验检测得到含碳量与时间关系的数据如下，
+                            试求含碳量y与时间t内在关系的拟合曲线。
+                        </p>
+                        <div class="well data-table-wrapper">
+                            <table class="data-table">
+                                <tr><td>t</td><td>0</td><td>5</td><td>10</td><td>15</td><td>20</td><td>25</td><td>30</td><td>35</td><td>40</td><td>45</td><td>50</td></tr>
+                                <tr><td>y</td><td>0</td><td>1.27</td><td>2.16</td><td>2.86</td><td>3.44</td><td>3.87</td><td>4.15</td><td>4.37</td><td>4.51</td><td>4.58</td><td>4.02</td></tr>
+                            </table>
+                        </div>
+                        <p>（1）用最小二乘法进行三次多项式的曲线拟合；</p>
+                        <p>（2）计算$y_j$与$y(t_j)$的误差，$j=1,2,...,11$；</p>
+                        <p>（3）另外选取一个拟合函数，进行拟合效果的比较</p>
+                        <p>（4）绘制出曲线拟合图形</p>
+<!--start-->
+<pre>
+本题目数据格式如下：
+[
+    [ 0,    5,   10,   15,   20,   25,   30,   35,   40,   45,   50],
+    [ 0, 1.27, 2.16, 2.86, 3.44, 3.87, 4.15, 4.37, 4.51, 4.58, 4.02]
+]
+</pre>
+<!--end-->
+                        <div>
+                            <h3>最小二乘法的n次多项式拟合</h3>
+                            <form name="computing-parameters" class="text-center">
+                                <p>数据输入框（示例参考上方，可直接复制）</p>
+                                <p>数据可共为两行或三行，依次表示实验数据x、y与权值rho（权值可省略）。</p>
+                                <textarea id="data-input" name="data-input"></textarea>
+                                <div class="input-group" id="pow-input">
+                                    <span class="input-group-addon">多项式次数</span>
+                                    <input name="pow" type="text" class="form-control" placeholder="如：2"/>
+                                </div>
+                            </form>
+                            <br>
+                            <p class="text-center">
+                                <button id="btn-start-computing" class="btn btn-success" type="button">绘制图像并计算误差</button>
+                            </p>
+                            <div id="plot">
+                                <p class="text-center text-info">
+                                    （这里将生成图像）
+                                </p>
+                            </div>
+                            <div class="well data-table-wrapper" id="error-analysis">
+                                <p class="text-center text-info">
+                                    （这里将生成误差表）
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        实验导航
+                    </div>
+                    <div class="panel-body">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li><a href="index.html">首页</a></li>
+                            <li><a href="01.html">课题一：解线性方程组的直接方法</a></li>
+                            <li><a href="02.html">课题二：矩阵求逆运算</a></li>
+                            <li><a href="03.html">课题三：解线性方程组的迭代法</a></li>
+                            <li><a href="04.html">课题四：迭代格式的比较</a></li>
+                            <li class="disabled"><a href="#" title="本课题不在教学范围内，尚未完成">课题五：求矩阵的部分特征值</a></li>
+                            <li><a href="06.html">课题六：函数插值方法</a></li>
+                            <li><a href="07.html">课题七：Runge现象的产生与克服</a></li>
+                            <li class="active"><a href="#">课题八：曲线拟合的最小二乘法</a></li>
+                            <li><a href="09.html">课题九：数值积分</a></li>
+                            <li><a href="10.html">课题十：常微分方程初值问题的数值方法</a></li>
+                            <li><a href="11.html">课题十一：两点边值问题</a></li>
+                            <li><a href="12.html">课题十二：数值方法教学软件</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <hr/>
+                <div class="text-center text-primary">
+                    <h4>段段数值分析编程实验</h4>
+                    <h4>段育凯 20144569</h4>
+                    软件学院 软件工程 1401班<br/>
+                    邮箱：<a href="mailto:a@neu.la">a@neu.la</a>
+                    手机：13704017786
+                    QQ：452214596
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--引入mathjax依赖-->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+        });
+    </script>
+    <script src="http://cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-AMS_CHTML"></script>
+</body>
+</html>

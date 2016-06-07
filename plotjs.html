@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>plot</title>
+    <script src="ExtLib/js/jquery-1.12.3.min.js"></script>
+</head>
+<body>
+<div>
+    <!--<canvas id="canvas"></canvas>-->
+    <div id="DDPlot"></div>
+</div>
+<script src="DDNALib/DDPlot.js"></script>
+<script>
+    var plot = new DDPlot("DDPlot",{
+        width: 600,
+        height: 600,
+//        initMinX: -0.59419,
+//        initMaxX:  0.70233,
+//        initMinY: -0.6143,
+//        initMaxY:  0.68222,
+//        initMinX: -75,
+//        initMaxX:  75,
+//        initMinY: -75,
+//        initMaxY:  75,
+        initMinX: -70,
+        initMaxX:  70,
+        initMinY: -70,
+        initMaxY:  70,
+//        backgroundColor: "#AAA",
+        hasGrid: true,
+        drawGap: 8,
+        autoWidth: true,
+        widthHeightRatio: 1
+    });
+
+    plot.addFunction(function(x){
+        return x * x;
+    },{
+        color: "#F00",
+        width: 3
+    });
+    plot.addFunction(function(x){
+        return x * x *x;
+    });
+    plot.addFunction(function(x){
+        return 1 / 2 * x;
+    });
+    plot.show();
+
+</script>
+</body>
+</html>
