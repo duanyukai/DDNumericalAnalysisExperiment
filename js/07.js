@@ -1,10 +1,5 @@
-/**
- * Created by dyk on 6/4/16.
- */
-
-
 $(function(){
-    var i, j;
+    var i;
     var matrix = [];
     matrix[0] = [];
     matrix[1] = [];

@@ -392,6 +392,20 @@ MatrixInputPanel.Utils.augmentedMatrixTeX = function(augmentedMatrix, precision)
     return matrixTeX;
 };
 
+MatrixInputPanel.Utils.luDecomposeTeX = function(l, u, rightVector, precision){
+    var i;
+    var augmentedMatrix = DDNA.Utils.copyMatrix(u);
+    for(i = 0; i < augmentedMatrix.length; i++){
+        augmentedMatrix[i][augmentedMatrix.length] = rightVector[i];
+    }
+    var right = MatrixInputPanel.Utils.augmentedMatrixTeX(augmentedMatrix, precision);
+    right = right.slice(18);
+    var left = "$\\begin{equation} ";
+    var lTeX = MatrixInputPanel.Utils.matrixTeX(l, precision);
+    lTeX = lTeX.slice(1, lTeX.length - 1);
+    return left + lTeX + right;
+};
+
 /**
  * 转化一般矩阵为TeX文本
  * @param matrix 一般矩阵

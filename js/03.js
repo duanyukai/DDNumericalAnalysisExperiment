@@ -1,54 +1,15 @@
-/**
- * Created by dyk on 6/4/16.
- */
-// var matrix0 = [
-//     [ 10,   3,   1],
-//     [  2, -10,   3],
-//     [  1,   3,  10]
-// ];
-// var vector0 =
-//     [ 14,  -5,  14];
-//
-// var matrix1 = [
-//     [  4,   2,  -3,  -1,   2,   1,   0,   0,   0,   0],
-//     [  8,   6,  -5,  -3,   6,   5,   0,   1,   0,   0],
-//     [  4,   2,  -2,  -1,   3,   2,  -1,   0,   3,   1],
-//     [  0,  -2,   1,   5,  -1,   3,  -1,   1,   9,   4],
-//     [ -4,   2,   6,  -1,   6,   7,  -3,   3,   2,   3],
-//     [  8,   6,  -8,   5,   7,  17,   2,   6,  -3,   5],
-//     [  0,   2,  -1,   3,  -4,   2,   5,   3,   0,   1],
-//     [ 16,  10, -11,  -9,  17,  34,   2,  -1,   2,   2],
-//     [  4,   6,   2,  -7,  13,   9,   2,   0,  12,   4],
-//     [  0,   0,  -1,   8,  -3, -24,  -8,   6,   3,  -1]
-// ];
-// var vector1 =
-//     [  5,  12,   3,   2,   3,  46,  13,  38,  19, -21];
-// var matrix2 = [
-//     [  4,   2,  -4,   0,   2,   4,   0,   0],
-//     [  2,   2,  -1,  -2,   1,   3,   2,   0],
-//     [ -4,  -1,  14,   1,  -8,  -3,   5,   6],
-//     [  0,  -2,   1,   6,  -1,  -4,  -3,   3],
-//     [  2,   1,  -8,  -1,  22,   4, -10,  -3],
-//     [  4,   3,  -3,  -4,   4,  11,   1,  -4],
-//     [  0,   2,   5,  -3, -10,   1,  14,   2],
-//     [  0,   0,   6,   3,  -3,  -4,   2,  19]
-// ];
-// var vector2 =
-//     [  0,  -6,   6,  23,  11, -22, -15,  45];
-//
-// var answer1 = DDNA.IterativeMethod.jacobiIterative(matrix0,vector0,[0,0,0],0.001,100);
-// console.log(answer1);
-// console.log("______________________________");
-// var answer2 = DDNA.IterativeMethod.jacobiIterative(matrix1,vector1,[1,-1,0,1,2,0,3,1,-1,3],0.001,100);
-// console.log(answer2);
 
 
 
-
-//////////////////////////////////////////////////////////////////
+//初始化输入框
 var inputPanel;
 var initValueInputs = [];
 $(function(){
+    //绑定单选框显示隐藏omega输入框
+    $('input[name="method"]').on("change", function(){
+        $('#omega-input').toggle(+this.value === 3 && this.checked);
+    }).change();
+
     //处理动态生成初始值输入框
     var finishCallback = function(){
         var initValuePanel = $("#init-value-input");
@@ -117,6 +78,21 @@ $(function(){
             return;
         }
 
+        //omega
+        if(choose == 3){
+            var omega = $("#omega-input").find("input").val();
+            if($.isNumeric(omega)){
+                omega = parseFloat(omega);
+                if(omega <= 0 || omega >= 2){
+                    alert("omega值应介于0到2之间，请重新输入");
+                    return;
+                }
+            }else{
+                alert("omega有误，请检查");
+                return;
+            }
+        }
+
         var resultPanel = $("#result-panel");
         resultPanel.empty();
 
@@ -147,11 +123,13 @@ $(function(){
         var tbody = $(resultPanel).find("tbody");
         var callback = function(i, vector, maxGap){
             var text = "<tr>";
-            text += "<td>" + (i + 1) + "</td>";
+            text += "<td>" + i + "</td>";
             for(i = 0; i < vector.length; i++){
-                text += "<td>" + MatrixInputPanel.Utils.beautifyFloat(vector[i], precision) + "</td>";
+                //text += "<td>" + MatrixInputPanel.Utils.beautifyFloat(vector[i], precision) + "</td>";
+                text += "<td>" + vector[i].toFixed(precision) + "</td>";
             }
-            text += "<td>" + MatrixInputPanel.Utils.beautifyFloat(maxGap, precision) + "</td>";
+            //text += "<td>" + MatrixInputPanel.Utils.beautifyFloat(maxGap, precision) + "</td>";
+            text += "<td>" + maxGap.toFixed(precision) + "</td>";
             text += "</tr>";
             tbody.append(text);
 
@@ -160,18 +138,16 @@ $(function(){
             case 1:
                 //Jacobi迭代法
                 answer = DDNA.IterativeMethod.jacobiIterative(matrix.coefficientMatrix, matrix.b, initValue, epsilon, maxTimes, callback);
-                console.log(answer);
                 break;
             case 2:
-                //Gauss-Seidel迭代法
+                //Gauss-Seidel迭代法，即omega为1的SOR方法
+                answer = DDNA.IterativeMethod.gaussSeidelIterative(matrix.coefficientMatrix, matrix.b, initValue, epsilon, maxTimes, callback);
                 break;
             case 3:
                 //SOR迭代法
+                answer = DDNA.IterativeMethod.SORIterative(matrix.coefficientMatrix, matrix.b, initValue, epsilon, maxTimes, omega, callback);
                 break;
         }
-
-
-        // resultPanel.append(MatrixInputPanel.Utils.matrixTeX(result, precision));
 
         //更新结果显示
         if(typeof MathJax != "undefined"){

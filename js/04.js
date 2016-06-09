@@ -1,36 +1,3 @@
-/**
- * Created by dyk on 6/4/16.
- */
-// var answer1 = DDNA.IterativeMethod.simpleIterative(function(x){
-//     return (3 * x + 1) / (x * x);
-// },2,0.001,100);
-// console.log(answer1);
-//
-// var answer2 = DDNA.IterativeMethod.simpleIterative(function(x){
-//     return (x * x * x - 1) / 3;
-// },2,0.001,100);
-// console.log(answer2);
-//
-// var answer3 = DDNA.IterativeMethod.simpleIterative(function(x){
-//     return Math.pow(3 * x + 1, 1 / 3);
-// },2,0.001,100);
-// console.log(answer3);
-//
-// var answer4 = DDNA.IterativeMethod.simpleIterative(function(x){
-//     return 1 / (x * x - 3);
-// },2,0.001,100);
-// console.log(answer4);
-//
-// var answer5 = DDNA.IterativeMethod.simpleIterative(function(x){
-//     return Math.sqrt(3 + 1 / x);
-// },2,0.001,100);
-// console.log(answer5);
-//
-// var answer6 = DDNA.IterativeMethod.simpleIterative(function(x){
-//     return x - 1 / 3 * ((x * x * x - 3 * x - 1) / (x * x - 1));
-// },2,0.001,100);
-// console.log(answer6);
-
 $(function(){
     //初始化滚动条
     $('#precision-slider').slider({

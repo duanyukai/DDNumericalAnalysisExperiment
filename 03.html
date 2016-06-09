@@ -31,6 +31,10 @@
                         <div class="page-header">
                             <h1>课题三：解线性方程组的迭代法</h1>
                         </div>
+                        <p>对课题一所列的线性方程组，分别采用Jacobi迭代法，Gauss-Seidel迭代法和SOR迭代法求解。</p>
+                        <p>（1）应用迭代法求解线性方程组，并与直接法做比较；</p>
+                        <p>（2）分别对不同精度要求，如$\epsilon = 10^{-3}, 10^{-4},10^{-5}$，利用所需迭代次数体会该迭代法的收敛快慢；</p>
+                        <p>（3）对方程组（2），（3）使用SOR方法时，选取松弛因子$\omega = 0.8, 0.9, 1, 1.1, 1.2$等，观察对算法收敛性的影响，并找出所选用松弛因子最佳值。</p>
                         <div id="input-panel"></div>
                         <form name="computing-parameters" class="text-center">
                             <div>
@@ -51,6 +55,10 @@
                                         <input type="radio" name="method" value="3">
                                         SOR迭代法
                                     </label>
+                                </div>
+                                <div class="input-group" id="omega-input">
+                                    <span class="input-group-addon">$\omega$</span>
+                                    <input name="omega" type="text" class="form-control" placeholder="如：1.2"/>
                                 </div>
                             </div>
                             <div>

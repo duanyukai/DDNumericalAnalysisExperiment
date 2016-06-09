@@ -1,7 +1,3 @@
-/**
- * Created by dyk on 6/4/16.
- */
-
 var lagrange;
 
 $(function(){

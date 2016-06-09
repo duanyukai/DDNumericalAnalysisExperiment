@@ -2,7 +2,7 @@
 var inputPanel;
 $(function(){
     //初始化输入面板
-    inputPanel = new MatrixInputPanel("input-panel-2","matrix", "DDNALib/MatrixInput/");
+    inputPanel = new MatrixInputPanel("input-panel","matrix", "DDNALib/MatrixInput/");
     inputPanel.init();
 
     //初始化滑动条
@@ -20,7 +20,8 @@ $(function(){
             return;
         }
 
-        var result = DDNA.MatrixInversion.solve(matrix);
+        var copiedMatrix = DDNA.Utils.copyMatrix(matrix);
+        var result = DDNA.MatrixInversion.solve(copiedMatrix);
         var resultPanel = $("#result-panel");
         resultPanel.empty();
         resultPanel.append(MatrixInputPanel.Utils.matrixTeX(result, precision));

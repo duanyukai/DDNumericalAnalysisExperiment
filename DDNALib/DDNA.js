@@ -23,6 +23,22 @@ DDNA.Utils.swapRow = function(matrix, i, j){
     return matrix;
 };
 
+DDNA.Utils.matrixMultiply = function(a, b){
+    var i, j, k;
+    var matrix = [];
+    for(i = 0; i < a.length; i++){
+        matrix[i] = [];
+        for(j = 0; j < a.length; j++){
+            var sum = 0;
+            for(k = 0; k < b.length; k++){
+                sum += a[i][k] * b[k][j];
+            }
+            matrix[i][j] = sum;
+        }
+    }
+    return matrix;
+};
+
 DDNA.Utils.isInt = function(value){
     return !isNaN(value) &&
         parseInt(Number(value)) == value &&
@@ -38,6 +54,17 @@ DDNA.GaussElimination = {};
  */
 DDNA.GaussElimination.eliminateInOrder = function(augmentedMatrix, callback){
     var i, j, k;
+    var matrixL, matrixU, rightVector;
+    //第零步，初始化matrixL
+    matrixL = [];
+    for(i = 0; i < augmentedMatrix.length; i++){
+        matrixL[i] = [];
+        for(j = 0; j < i; j++)
+            matrixL[i][j] = 0;
+        matrixL[i][j] = 1;
+        for(j = i + 1; j < augmentedMatrix.length; j++)
+            matrixL[i][j] = 0;
+    }
     //第一步，消元
     //依次迭代每一行，消去其下方所有行的当前首位非零元素
     for(i = 0; i < augmentedMatrix.length - 1; i++){
@@ -47,16 +74,15 @@ DDNA.GaussElimination.eliminateInOrder = function(augmentedMatrix, callback){
             //依次迭代消去下方每行的首位非零元素
             for(j = i + 1; j < augmentedMatrix.length; j++){
                 var ratio = augmentedMatrix[j][i] / augmentedMatrix[i][i];
+                //更新matrixL
+                matrixL[j][i] = ratio;
                 //消该行每个元素
                 for(k = i; k < augmentedMatrix[j].length; k++){
                     augmentedMatrix[j][k] -= ratio * augmentedMatrix[i][k];
                 }
             }
             if(typeof callback == "function"){
-                // console.log("是函数");
                 callback(augmentedMatrix);
-            }else{
-                // console.log("不是函数");
             }
         }else{
             return null;
@@ -78,15 +104,39 @@ DDNA.GaussElimination.eliminateInOrder = function(augmentedMatrix, callback){
         }
         result[i] /= augmentedMatrix[i][i];
     }
-    return result;
+    //合成matrixU，rightVector
+    matrixU = [];
+    rightVector = [];
+    for(i = 0; i < augmentedMatrix.length; i++){
+        matrixU[i] = augmentedMatrix[i].slice(0, augmentedMatrix.length);
+        rightVector[i] = augmentedMatrix[i][augmentedMatrix.length];
+    }
+
+    return {
+        result: result,
+        matrixL: matrixL,
+        matrixU: matrixU,
+        rightVector: rightVector
+    }
 };
 /**
  * 列主元高斯消去法算法实现
  * @param augmentedMatrix 增广矩阵
  * @returns {*}
  */
-DDNA.GaussElimination.eliminateWithOutPCA = function(augmentedMatrix){
+DDNA.GaussElimination.eliminateWithOutPCA = function(augmentedMatrix, callback){
     var i, j, k;
+    var matrixL, matrixU, rightVector;
+    //第零步，初始化matrixL
+    matrixL = [];
+    for(i = 0; i < augmentedMatrix.length; i++){
+        matrixL[i] = [];
+        for(j = 0; j < i; j++)
+            matrixL[i][j] = 0;
+        matrixL[i][j] = 1;
+        for(j = i + 1; j < augmentedMatrix.length; j++)
+            matrixL[i][j] = 0;
+    }
     //第一步，消元
     //依次迭代每一行
     for(i = 0; i < augmentedMatrix.length - 1; i++){
@@ -110,12 +160,16 @@ DDNA.GaussElimination.eliminateWithOutPCA = function(augmentedMatrix){
         //依次迭代消去下方每行的首位非零元素
         for(j = i + 1; j < augmentedMatrix.length; j++){
             var ratio = augmentedMatrix[j][i] / augmentedMatrix[i][i];
+            //更新matrixL
+            matrixL[j][i] = ratio;
             //消该行每个元素
             for(k = i; k < augmentedMatrix[j].length; k++){
                 augmentedMatrix[j][k] -= ratio * augmentedMatrix[i][k];
             }
         }
-
+        if(typeof callback == "function"){
+            callback(augmentedMatrix);
+        }
     }
 
     //第二步，回代
@@ -133,7 +187,20 @@ DDNA.GaussElimination.eliminateWithOutPCA = function(augmentedMatrix){
         }
         result[i] /= augmentedMatrix[i][i];
     }
-    return result;
+    //合成matrixU，rightVector
+    matrixU = [];
+    rightVector = [];
+    for(i = 0; i < augmentedMatrix.length; i++){
+        matrixU[i] = augmentedMatrix[i].slice(0, augmentedMatrix.length);
+        rightVector[i] = augmentedMatrix[i][augmentedMatrix.length];
+    }
+
+    return {
+        result: result,
+        matrixL: matrixL,
+        matrixU: matrixU,
+        rightVector: rightVector
+    }
 };
 
 
@@ -178,7 +245,6 @@ DDNA.SquareRootMethod.defaultSolve = function(matrix, vector){
         }
         result[i] = (vector[i] - sum3) / matrix[i][i];
     }
-    console.log(result);
     for(i = matrix.length - 1; i >= 0; i--){
         //先计算其前的乘积之和
         var sum4 = 0;
@@ -187,8 +253,6 @@ DDNA.SquareRootMethod.defaultSolve = function(matrix, vector){
         }
         result[i] = (result[i] - sum4) / matrix[i][i];
     }
-    console.log(result);
-
 
     return result;
 };
@@ -214,12 +278,14 @@ DDNA.SquareRootMethod.improvedSolve = function(matrix, vector){
 DDNA.ChaseMethod = {};
 
 /**
- * 追赶法
- * @param matrix 系数矩阵
- * @param vector b向量
+ * 解三对角方程组的追赶法
+ * @param a
+ * @param c
+ * @param d
+ * @param b
  */
-DDNA.ChaseMethod.solve = function(matrix, vector){
-
+DDNA.ChaseMethod.solve = function(a, c, d, b){
+    
 };
 
 DDNA.MatrixInversion = {};
@@ -341,7 +407,7 @@ DDNA.IterativeMethod.jacobiIterative = function(matrix, rightVector, initVector,
         xVectorLast[i] = initVector[i];
     }
     //开始迭代，至多maxTimes次
-    for(i = 0; i < maxTimes; i++){
+    for(i = 1; i <= maxTimes; i++){
         //计算新的第j行数据
         for(j = 0; j < matrix.length; j++){
             xVectorNow[j] = xVectorLast[j];
@@ -375,11 +441,42 @@ DDNA.IterativeMethod.jacobiIterative = function(matrix, rightVector, initVector,
 };
 
 DDNA.IterativeMethod.gaussSeidelIterative = function(matrix, rightVector, initVector, epsilon, maxTimes, callback){
-    
+    DDNA.IterativeMethod.SORIterative(matrix, rightVector, initVector, epsilon, maxTimes, 1, callback);
 };
 
-DDNA.IterativeMethod.SORIterative = function(matrix, rightVector, initVector, epsilon, maxTimes, callback){
+DDNA.IterativeMethod.SORIterative = function(matrix, rightVector, initVector, epsilon, maxTimes, omega, callback){
+    var i, j, k, l;
+    var xVector = [];
+    var maxX, tempDeltaX;
 
+    //将初始向量复制
+    for(i = 0; i < initVector.length; i++)
+        xVector[i] = initVector[i];
+    //循环迭代直到达到最大次数限制
+    for(i = 1; i <= maxTimes; i++){
+        //循环顺便计算本次迭代中x向量绝对值最大的分量
+        maxX = 0;
+        //计算矩阵每一行迭代结果
+        for(k = 0; k < xVector.length; k++){
+            var sum = 0;
+            for(l = 0; l < xVector.length; l++){
+                sum += matrix[k][l] * xVector[l];
+            }
+            tempDeltaX = omega * (rightVector[k] - sum) / matrix[k][k];
+            if(Math.abs(tempDeltaX) > maxX)
+                maxX = Math.abs(tempDeltaX);
+            xVector[k] += tempDeltaX;
+        }
+        //回调函数返回本次迭代结果
+        if(typeof callback == "function"){
+            callback(i, xVector, maxX);
+        }
+        //判断是否已达到精度要求
+        if(maxX < epsilon)
+            return xVector;
+    }
+    //达到最大迭代次数
+    return xVector;
 };
 /**
  * 非线性方程求根的简单迭代法
