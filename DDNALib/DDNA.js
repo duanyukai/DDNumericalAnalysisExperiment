@@ -392,9 +392,6 @@ DDNA.MatrixInversion._lowerTriangleEliminate = function(matrix){
         }
     }
 
-    console.log("单位阵");
-    console.log(result);
-
     //开始下三角消元
     for(i = 0; i < matrix.length - 1; i++){
         //找出列主元
@@ -419,7 +416,7 @@ DDNA.MatrixInversion._lowerTriangleEliminate = function(matrix){
         for(j = i + 1; j < matrix.length; j++){
             var ratio = matrix[j][i] / matrix[i][i];
             //消该行每个元素
-            for(k = i; k < matrix[j].length; k++){
+            for(k = 0; k < matrix[j].length; k++){
                 matrix[j][k] -= ratio * matrix[i][k];
                 result[j][k] -= ratio * result[i][k];
             }
@@ -442,8 +439,8 @@ DDNA.MatrixInversion._upperTriangleEliminate = function(matrixResult){
         for(j = i - 1; j >= 0; j--){
             var ratio = matrix[j][i] / matrix[i][i];
             for(k = 0; k < matrix[j].length; k++){
-                matrix[j][k] = matrix[j][k] - ratio * matrix[i][k];
-                result[j][k] = result[j][k] - ratio * result[i][k];
+                matrix[j][k] -= ratio * matrix[i][k];
+                result[j][k] -= ratio * result[i][k];
             }
         }
     }
@@ -620,10 +617,8 @@ DDNA.Interpolation.Lagrange.prototype.valueOf = function(x){
         //非已存在的数据点，依次计算每一个小项
         //每项分别除以 x - x_{i}, 即可提取公因式 omega_{n+1}(x)
         coSum += this.cos[i] / (x - this.xs[i]);
-        //console.log(this.cos[i] / (x - this.xs[i])); //todo
         //借助本循环计算公因式 omega_{n+1}(x)
         commonFactor *= x - this.xs[i];
-        //console.log(commonFactor);  //todo
 
     }
     return commonFactor * coSum;
@@ -707,8 +702,7 @@ DDNA.LeastSquareMethod.PolynomialMethod = function(pow, xVector, yVector, rho){
     }
 
     //对称正定方程组，使用平方根法
-    var coefficients = DDNA.SquareRootMethod.defaultSolve(matrix, bVector);
-    console.log(coefficients);
+    var coefficients = DDNA.SquareRootMethod.defaultSolve(matrix, bVector).result;
 
     this.pow = pow;
     this.coefficients = coefficients;
@@ -720,6 +714,10 @@ DDNA.LeastSquareMethod.PolynomialMethod.prototype.valueOf = function(x){
         result += this.coefficients[i] * Math.pow(x, i);
     }
     return result;
+};
+
+DDNA.LeastSquareMethod.PolynomialMethod.prototype.getCoefficients = function(){
+    return this.coefficients;
 };
 
 DDNA.LeastSquareMethod.PolynomialMethod._vectorMultiply = function(xVector, yVector, rho){

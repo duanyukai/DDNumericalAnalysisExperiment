@@ -13,6 +13,10 @@
     padding: 0 2px 0 2px;
 }
 
+#coefficient{
+    text-align: center;
+}
+
 #data-input{
     display: block;
     width: 95%;

@@ -107,6 +107,15 @@ $(function(){
         plot.addPoints(matrix);
         plot.show();
 
+        //多项式系数输出
+        var coPanel = $("#coefficient");
+        coPanel.empty();
+
+        var co = lsm.getCoefficients();
+        for(i = 0; i < co.length; i++){
+            coPanel.append("$a_" + i + "=" + co[i] + "$<br>");
+        }
+
         //误差分析
         var errorPanel = $("#error-analysis");
         errorPanel.empty();
@@ -135,6 +144,7 @@ $(function(){
 
         //更新公式
         if(typeof MathJax != "undefined"){
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, coPanel[0]]);
             MathJax.Hub.Queue(["Typeset", MathJax.Hub, errorPanel[0]]);
         }
     });
