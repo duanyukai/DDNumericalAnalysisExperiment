@@ -24,6 +24,9 @@ $(function(){
         var result = DDNA.MatrixInversion.solve(copiedMatrix);
         var resultPanel = $("#result-panel");
         resultPanel.empty();
+        resultPanel.append("输入的矩阵为：<br>");
+        resultPanel.append(MatrixInputPanel.Utils.matrixTeX(matrix, precision));
+        resultPanel.append("<br>矩阵的逆的结果为：<br>");
         resultPanel.append(MatrixInputPanel.Utils.matrixTeX(result, precision));
 
         //更新结果显示

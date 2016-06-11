@@ -254,7 +254,18 @@ DDNA.SquareRootMethod.defaultSolve = function(matrix, vector){
         result[i] = (result[i] - sum4) / matrix[i][i];
     }
 
-    return result;
+    var matrixG = [];
+    for(i = 0; i < matrix.length; i++){
+        matrixG[i] = [];
+        for(j = 0; j <= i; j++)
+            matrixG[i][j] = matrix[i][j];
+        for(j = i + 1; j < matrix.length; j++)
+            matrixG[i][j] = 0;
+    }
+    return {
+        result: result,
+        matrixG: matrixG
+    }
 };
 
 /**
@@ -264,18 +275,66 @@ DDNA.SquareRootMethod.defaultSolve = function(matrix, vector){
  */
 DDNA.SquareRootMethod.improvedSolve = function(matrix, vector){
     var i, j, k;
-
+    var matrixL = [], diagD = [], result = [];
+    //初始化matrixL
+    for(i = 0; i < matrix.length; i++){
+        matrixL[i] = [];
+        for(j = 0; j < i; j++)
+            matrixL[i][j] = 0;
+        matrixL[i][j] = 1;
+        for(j = i + 1; j < matrix.length; j++)
+            matrixL[i][j] = 0;
+    }
+    //计算公式（注意ijk含义不同，教材P30）
     //a_ik = sum(l_im * d_m * l_km, m, 1, k-1) + l_ik * d_k
     //d_k = a_kk - sum(l_km^2 * d_m, m, 1, k-1)
     //l_ik = (a_ik - sum(l_im * d_m * l_km, m, 1, k-1)) / d_k
-    //先计算d_k
-    var sum1 = 0;
-    // for(i = 0; i < ){
-    //
-    // }
+
+    for(i = 0; i < matrix.length; i++){
+        var sum1 = 0;
+        for(j = 0; j < i; j++)
+            sum1 += matrixL[i][j] * matrixL[i][j] * diagD[j];
+        diagD[i] = matrix[i][i] - sum1;
+        for(j = i + 1; j < matrix.length; j++){
+            var sum2 = 0;
+            for(k = 0; k < i; k++)
+                sum2 += matrixL[j][k] * diagD[k] * matrixL[i][k];
+            matrixL[j][i] = (matrix[j][i] - sum2) / diagD[i];
+        }
+    }
+
+    //系数矩阵已得，开始求解
+    for(i = 0; i < matrix.length; i++){
+        //先计算其前的乘积之和
+        var sum3 = 0;
+        for(j = 0; j < i; j++){
+            sum3 += matrixL[i][j] * result[j];
+        }
+        result[i] = (vector[i] - sum3) / matrixL[i][i];
+    }
+
+    //求D^-1 * b
+    for(i = 0; i < matrix.length; i++){
+        result[i] /= diagD[i];
+    }
+
+    for(i = matrix.length - 1; i >= 0; i--){
+        //先计算其前的乘积之和
+        var sum4 = 0;
+        for(j = matrix.length - 1; j > i; j--){
+            sum4 += matrixL[j][i] * result[j];
+        }
+        result[i] = (result[i] - sum4) / matrixL[i][i];
+    }
+
+    return {
+        result: result,
+        matrixL: matrixL,
+        diagD: diagD
+    }
 };
 
-DDNA.ChaseMethod = {};
+DDNA.ChasingMethod = {};
 
 /**
  * 解三对角方程组的追赶法
@@ -284,8 +343,24 @@ DDNA.ChaseMethod = {};
  * @param d
  * @param b
  */
-DDNA.ChaseMethod.solve = function(a, c, d, b){
-    
+DDNA.ChasingMethod.solve = function(a, c, d, b){
+    var i, j;
+    var alpha = [], beta = [], x = [], y = [];
+    alpha[0] = a[0];
+    for(i = 0; i < a.length - 1; i++){
+        beta[i] = c[i] / alpha[i];
+        alpha[i + 1] = a[i + 1] - d[i + 1] * beta[i];
+    }
+
+    y[0] = b[0] / alpha[0];
+    for(i = 1; i < a.length; i++){
+        y[i] = (b[i] - d[i] * y[i - 1]) / alpha[i];
+    }
+    x[a.length - 1] = y[a.length - 1];
+    for(i = a.length - 2; i >= 0; i--){
+        x[i] = y[i] - beta[i] * x[i + 1];
+    }
+    return x;
 };
 
 DDNA.MatrixInversion = {};
